@@ -9,19 +9,20 @@ var strings = {
     'email': "لطفا ایمیل خود را وارد کنید.",
     'school': "لطفا نام مرکز سمپاد مرتبط با خود را وارد کنید.",
     'university': "لطفا رشته‌ی تحصیلی، دانشگاه و مقطع تحصیلی خود را وارد کنید.",
-    'description': "**معرفی اجمالی خود**" + "\n"
+    'description': "**معرفی اجمالی خود**" + "\n" +
     "در این بخش به اختصار به مواردی از این قبیل اشاره بفرمایید: افتخارات علمی، فرهنگی، قرآنی و... خود نظیر مدال المپیاد، رتبه کنکور، موفقیت پژوهشی و... همچنین سوابق کاری ویژه یا فعالیت خاص در زمینه تعلیم و تربیت",
-    'welcome': "به بات تلگرام احیای سمپاد خوش آمده‌اید. لطفا مشخصات زیر را وارد کنید.",
+    'welcome': "به بات تلگرام احیای سمپاد خوش آمده‌اید. لطفا مشخصات خود را وارد کنید.",
 }
 
 
-var tocken
-fs.readFile('tocken.txt', 'utf8', function (err, data) {
+var token
+fs.readFile('token.txt', 'utf8', function (err, data) {
     if (err) {
-        console.log('tocken read error!')
+        console.log('token read error!')
     }
-    tocken = data;
-    console.log(tocken)
+    token = data;
+    createBot();
+    console.log(token)
 });
 
 mongoose.connect('mongodb://localhost/savesampad');
@@ -48,22 +49,27 @@ var userSchema = mongoose.Schema({
 var userModel = mongoose.model('userModel', userSchema)
 
 // Create a bot that uses 'polling' to fetch new updates
-const bot = new TelegramBot(token, {polling: true});
 
-bot.on('message', (msg) => {
-    const chatId = msg.chat.id
-    userModel.findOne({'chatId': chatId}, function (err, data) {
-        if(err)
-            throw err
-        if(doc) {
-           bot.sendMessage(chatId, strings['twice'])
-        } else {
-            startForm(chatId);
-        }
+var bot
+function createBot() {
+    bot = new TelegramBot(token, {polling: true});
+    bot.on('message', (msg) => {
+        const chatId = msg.chat.id
+        userModel.findOne({'chatId': chatId}, function (err, data) {
+            if(err)
+                throw err
+            if(data) {
+                bot.sendMessage(chatId, strings['twice'])
+            } else {
+                startForm(chatId);
+            }
+        })
     })
-})
+}
 
-function startFrom(chatId) {
+
+
+function startForm(chatId) {
 
     bot.sendMessage(chatId, strings['welcome'])
 }
