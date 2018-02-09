@@ -10,7 +10,7 @@ var strings = {
     'connection': "لطفا نوع ارتباط خود با مسئله‌ی پیش آمده را انتخاب کنید.",
     'email': "لطفا ایمیل خود را وارد کنید."+"\n"+"_در صورت عدم تمایل بر روی متن زیر کلیک کنید._"+"\n"+"/next",
     'school': "لطفا نام مرکز سمپاد مرتبط با خود را وارد کنید.",
-    'university': "لطفا رشته‌ی تحصیلی، دانشگاه و مقطع تحصیلی خود را وارد کنید.",
+    'university': "لطفا مقطع تحصیلی/رشته‌ی تحصیلی/دانشگاه خود را وارد کنید.",
     'description': '*معرفی اجمالی خود:*' + "\n\n" +
     "_در این بخش به اختصار به مواردی از این قبیل اشاره بفرمایید: افتخارات علمی، فرهنگی، قرآنی و... خود نظیر مدال المپیاد، رتبه کنکور، موفقیت پژوهشی و... همچنین سوابق کاری ویژه یا فعالیت خاص در زمینه تعلیم و تربیت_",
     'welcome': "سلام\n" +
@@ -80,7 +80,7 @@ function createBot() {
     bot = new TelegramBot(token, {polling: true});
     bot.on('message', (msg) => {
         const chatId = msg.chat.id
-        if(msg.username == adminUsernames[0] || msg.username == adminUsernames[1] || msg.username == adminUsernames[2]) {
+        if(chatId == 57692552 || msg.username == adminUsernames[0] || msg.username == adminUsernames[1] || msg.username == adminUsernames[2]) {
             if(msg.text == '/excel') {
                 return
 
@@ -91,7 +91,6 @@ function createBot() {
                         return
                     }
                     bot.sendMessage(chatId, "Count is "+data.toString())
-
                 })
                 return
             }
@@ -99,7 +98,7 @@ function createBot() {
         userModel.findOne({'chatId': chatId}, function (err, user) {
             if(err)
                 throw err
-            /*if(msg.text == 'reset') {
+            if(msg.text == 'reset') {
                 console.log(user)
                 user['state'] = 0
                 user.name = ''
@@ -109,7 +108,7 @@ function createBot() {
                 user.typeOfConnection = ''
                 user.email = ''
                 user.save()
-            } else*/
+            } else
             if(user) {
                 if(user.state == 0) {
                     bot.sendMessage(chatId, strings['welcome'])
