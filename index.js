@@ -2,6 +2,8 @@ const TelegramBot = require('node-telegram-bot-api');
 var mongoose = require('mongoose');
 var fs = require('fs');
 
+var adminUsernames = ['airani_a', 'Ahajiee', 'amirhosseinakhavein']
+
 var strings = {
     'twice': "شما قبلا این نامه را امضا کرده‌اید :)",
     'name': "لطفا نام و نام خانوادگی خود را وارد کنید.",
@@ -77,6 +79,20 @@ function createBot() {
     bot = new TelegramBot(token, {polling: true});
     bot.on('message', (msg) => {
         const chatId = msg.chat.id
+        if(adminUsernames.includes(msg.username)) {
+            if(msg.text == '/excel') {
+
+            } else if(msg.text == '/count') {
+                userModel.count({}, function (err, data) {
+                    if(err) {
+                        throw err
+                        return
+                    }
+                    bot.sendMessage(chatId, "Count is "+data.toString())
+
+                })
+            }
+        }
         userModel.findOne({'chatId': chatId}, function (err, user) {
             if(err)
                 throw err
