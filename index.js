@@ -9,12 +9,18 @@ var strings = {
     'email': "لطفا ایمیل خود را وارد کنید.",
     'school': "لطفا نام مرکز سمپاد مرتبط با خود را وارد کنید.",
     'university': "لطفا رشته‌ی تحصیلی، دانشگاه و مقطع تحصیلی خود را وارد کنید.",
-    'description': 'معرفی اجمالی خود:' + "\n\n" +
-    "در این بخش به اختصار به مواردی از این قبیل اشاره بفرمایید: افتخارات علمی، فرهنگی، قرآنی و... خود نظیر مدال المپیاد، رتبه کنکور، موفقیت پژوهشی و... همچنین سوابق کاری ویژه یا فعالیت خاص در زمینه تعلیم و تربیت",
+    'description': '*معرفی اجمالی خود:*' + "\n\n" +
+    "_در این بخش به اختصار به مواردی از این قبیل اشاره بفرمایید: افتخارات علمی، فرهنگی، قرآنی و... خود نظیر مدال المپیاد، رتبه کنکور، موفقیت پژوهشی و... همچنین سوابق کاری ویژه یا فعالیت خاص در زمینه تعلیم و تربیت_",
     'welcome': "به بات تلگرام احیای سمپاد خوش آمده‌اید. لطفا مشخصات خود را وارد کنید.",
     'sure': "آیا اطلاعات خود را درست وارد کرده‌اید؟",
     'saveerror': "متاسفانه اطلاعات شما به درستی ذخیره نشدند. دوباره تلاش کنید.",
     'savesuccessful': "اطلاعات شما با موفقیت ذخیره شد. :)",
+    'choice1': "فارغ‌التحصیل سمپاد هستم.",
+    'choice2': "دانش‌آموز سمپاد هستم.",
+    'choice3': "ولی دانش‌آموز یا ولی فارغ‌التحصیل هستم.",
+    'choice4': "معلم سمپاد هستم.",
+    'choice5': "فعال/کارشناس تعلیم و تربیت هستم.",
+    'choice6': "دغدغه‌ی این موضوع را دارم و جزء دسته‌های بالا نیستم.",
 }
 
 
@@ -78,7 +84,11 @@ function createBot() {
                 if(user.state == 1) {
                     user['name'] = msg.text
                     user['state'] += 1
-                    bot.sendMessage(chatId, strings['connection'])
+                    bot.sendMessage(chatId, strings['connection'], {
+                        "reply_markup": {
+                            "keyboard": [[strings['choice1'], strings['choice2']], [strings['choice3'], strings['choice4']], [strings['choice5'], strings['choice6']]]
+                        }
+                    })
                 } else if(user.state == 2) {
                     user['typeOfConnection'] = msg.text
                     user['state'] += 1
@@ -94,8 +104,9 @@ function createBot() {
                 } else if(user.state == 5) {
                     user['university'] = msg.text
                     user['state'] += 1
-                    bot.sendMessage(chatId, strings['description'])
+                    bot.sendMessage(chatId, strings['description'], {parse_mode: "Markdown"})
                 } else if(user.state == 6) {
+                    user['description'] = msg.text
                     bot.sendMessage(chatId, strings['savesuccessful'])
                     user['state'] += 1
 
