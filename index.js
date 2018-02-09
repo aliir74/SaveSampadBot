@@ -28,7 +28,8 @@ var strings = {
     'choice3': "ولی دانش‌آموز یا ولی فارغ‌التحصیل هستم.",
     'choice4': "معلم سمپاد هستم.",
     'choice5': "فعال/کارشناس تعلیم و تربیت هستم.",
-    'choice6': "دغدغه‌ی این موضوع را دارم و جزء دسته‌های بالا نیستم.",
+    'choice7': "دغدغه‌ی این موضوع را دارم و جزء دسته‌های بالا نیستم.",
+    'choice6': "فارغ‌الصتحیل و دبیر سمپاد هستم."
 }
 
 
@@ -117,7 +118,7 @@ function createBot() {
                     user['state'] += 1
                     bot.sendMessage(chatId, strings['connection'], {
                         "reply_markup": {
-                            "keyboard": [[strings['choice1'], strings['choice2']], [strings['choice3'], strings['choice4']], [strings['choice5'], strings['choice6']]],
+                            "keyboard": [[strings['choice1'], strings['choice2']], [strings['choice3'], strings['choice4']], [strings['choice5'], strings['choice6']], [strings['choice7']]],
                             "one_time_keyboard": true
                         }
                     })
