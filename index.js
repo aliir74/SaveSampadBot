@@ -12,6 +12,9 @@ var strings = {
     'description': "**معرفی اجمالی خود**" + "\n" +
     "در این بخش به اختصار به مواردی از این قبیل اشاره بفرمایید: افتخارات علمی، فرهنگی، قرآنی و... خود نظیر مدال المپیاد، رتبه کنکور، موفقیت پژوهشی و... همچنین سوابق کاری ویژه یا فعالیت خاص در زمینه تعلیم و تربیت",
     'welcome': "به بات تلگرام احیای سمپاد خوش آمده‌اید. لطفا مشخصات خود را وارد کنید.",
+    'sure': "آیا اطلاعات خود را درست وارد کرده‌اید؟",
+    'saveerror': "متاسفانه اطلاعات شما به درستی ذخیره نشدند. دوباره تلاش کنید."
+    'savesuccessful': "اطلاعات شما با موفقیت ذخیره شد. :)"
 }
 
 
@@ -40,10 +43,10 @@ var userSchema = mongoose.Schema({
     chatId: Number,
     name: String,
     typeOfConnection: String,
-    Email: String,
-    School: String,
-    University: String,
-    Description: String,
+    email: String,
+    school: String,
+    university: String,
+    description: String,
 });
 
 var userModel = mongoose.model('userModel', userSchema)
@@ -72,4 +75,63 @@ function createBot() {
 function startForm(chatId) {
 
     bot.sendMessage(chatId, strings['welcome'])
+    bot.sendMessage(chatId, strings['name'])
+    newuser = {
+        'chatId': chatId,
+        'name': "",
+        'typeOfConnection': "",
+        'email': "",
+        'school': "",
+        'university': "",
+        'description': "",
+    }
+    bot.on('message', (msg) => {
+        newuser['name'] = msg.text
+        bot.sendMessage(chatId, strings['connection'])
+        bot.on('message', (msg) => {
+            newuser['typeOfConnection'] = msg.text
+            bot.sendMessage(chatId, strings['email'])
+            bot.on('message', (msg) => {
+                newuser['email'] = msg.text
+                bot.sendMessage(chatId, strings['school'])
+                bot.on('message', (msg) => {
+                    newuser[school] = msg.text
+                    bot.sendMessage(chatId, strings['university'])
+                    bot.on('message', (msg) => {
+                        newuser['university'] = msg.text
+                        bot.sendMessage(chatId, strings['description'])
+                        bot.on('message', (msg) => {
+                            newuser['description'] = msg.text
+                            addUser(chatId, newuser)
+                        })
+                    })
+                })
+            })
+        })
+    })
+}
+
+function addUser(chatId, user) {
+    bot.sendMessage(chatId, strings['sure'], {
+        "reply_markup" : {
+            "keyboard": [["بله"], ["خیر"]]
+        }
+    })
+    bot.on('message', (msg) => {
+        if(msg.text == "بله") {
+            userModel.create({}, function (err, newuser) {
+                if(err) {
+                    throw err
+                    bot.sendMessage(chatId, strings['saveerror'])
+                    startForm()
+                    return
+                }
+                bot.sendMessage(chatId, strings['savesuccessful'])
+            })
+        } else {
+            startForm()
+        }
+    })
+
+
 }
