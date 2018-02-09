@@ -6,7 +6,7 @@ var strings = {
     'twice': "شما قبلا این نامه را امضا کرده‌اید :)",
     'name': "لطفا نام و نام خانوادگی خود را وارد کنید.",
     'connection': "لطفا نوع ارتباط خود با مسئله‌ی پیش آمده را انتخاب کنید.",
-    'email': "لطفا ایمیل خود را وارد کنید.",
+    'email': "لطفا ایمیل خود را وارد کنید."+"\n"+"_در صورت عدم تمایل بر روی متن زیر کلیک کنید._"+"\n"+"/next",
     'school': "لطفا نام مرکز سمپاد مرتبط با خود را وارد کنید.",
     'university': "لطفا رشته‌ی تحصیلی، دانشگاه و مقطع تحصیلی خود را وارد کنید.",
     'description': '*معرفی اجمالی خود:*' + "\n\n" +
@@ -14,7 +14,12 @@ var strings = {
     'welcome': "به بات تلگرام احیای سمپاد خوش آمده‌اید. لطفا مشخصات خود را وارد کنید.",
     'sure': "آیا اطلاعات خود را درست وارد کرده‌اید؟",
     'saveerror': "متاسفانه اطلاعات شما به درستی ذخیره نشدند. دوباره تلاش کنید.",
-    'savesuccessful': "اطلاعات شما با موفقیت ذخیره شد. :)",
+    'savesuccessful': "امضای شما پای\n" +
+    "\"نامه به رهبری " +
+    "برای نجات و احیای سمپاد\"\n" +
+    "با موفقیت ثبت شد.\n" +
+    "\n" +
+    "به امید نجات و احیای سمپاد",
     'choice1': "فارغ‌التحصیل سمپاد هستم.",
     'choice2': "دانش‌آموز سمپاد هستم.",
     'choice3': "ولی دانش‌آموز یا ولی فارغ‌التحصیل هستم.",
@@ -72,9 +77,17 @@ function createBot() {
             if(err)
                 throw err
             if(msg.text == 'reset') {
-                user['state'] = 0
                 console.log(user)
+                user['state'] = 0
+                user.name = ''
+                user.school = ''
+                user.university = ''
+                user.description = ''
+                user.typeOfConnection = ''
+                user.email = ''
                 user.save()
+                bot.sendMessage(chatId, strings['welcome'])
+                setTimeout(() => {bot.sendMessage(chatId, strings['name'])}, 500)
             } else
             if(user) {
                 if(user.state == 0) {
@@ -86,18 +99,21 @@ function createBot() {
                     user['state'] += 1
                     bot.sendMessage(chatId, strings['connection'], {
                         "reply_markup": {
-                            "keyboard": [[strings['choice1'], strings['choice2']], [strings['choice3'], strings['choice4']], [strings['choice5'], strings['choice6']]]
+                            "keyboard": [[strings['choice1'], strings['choice2']], [strings['choice3'], strings['choice4']], [strings['choice5'], strings['choice6']]],
+                            "one_time_keyboard": true
                         }
                     })
                 } else if(user.state == 2) {
                     user['typeOfConnection'] = msg.text
                     user['state'] += 1
-                    bot.sendMessage(chatId, strings['email'])
-                } else if(user.state == 3) {
-                    user['email'] = msg.text
+                    bot.sendMessage(chatId, strings['email'], {parse_mode: 'Markdown'})
+                } else if(user.state == 4) {
+                    if(msg.text != '/next') {
+                        user['email'] = msg.text
+                    }
                     user['state'] += 1
                     bot.sendMessage(chatId, strings['school'])
-                } else if(user.state == 4) {
+                } else if(user.state == 3) {
                     user['school'] = msg.text
                     user['state'] += 1
                     bot.sendMessage(chatId, strings['university'])
@@ -119,7 +135,6 @@ function createBot() {
                 user.save()
             } else {
                 bot.sendMessage(chatId, strings['welcome'])
-
                 setTimeout(() => {bot.sendMessage(chatId, strings['name'])}, 500)
                 userModel.create({'chatId': chatId, 'state': 1, 'first_name': msg.first_name, 'last_name': msg.last_name, 'username': msg.username}, function (err, data) {
                     if (err) return handleError(err)
