@@ -25,7 +25,7 @@ var strings = {
     "به امید نجات و احیای سمپاد",
     'choice1': "فارغ‌التحصیل سمپاد هستم.",
     'choice2': "دانش‌آموز سمپاد هستم.",
-    'choice3': "ولی دانش‌آموز یا ولی فارغ‌التحصیل هستم.",
+    'choice3': "ولی سمپادی هستم.",
     'choice4': "معلم سمپاد هستم.",
     'choice5': "فعال/کارشناس تعلیم و تربیت هستم.",
     'choice7': "دغدغه‌ی این موضوع را دارم و جزء دسته‌های بالا نیستم.",
@@ -80,8 +80,9 @@ function createBot() {
     bot = new TelegramBot(token, {polling: true});
     bot.on('message', (msg) => {
         const chatId = msg.chat.id
-        if(adminUsernames.includes(msg.username)) {
+        if(msg.username == adminUsernames[0] || msg.username == adminUsernames[1] || msg.username == adminUsernames[2]) {
             if(msg.text == '/excel') {
+                return
 
             } else if(msg.text == '/count') {
                 userModel.count({}, function (err, data) {
@@ -92,12 +93,13 @@ function createBot() {
                     bot.sendMessage(chatId, "Count is "+data.toString())
 
                 })
+                return
             }
         }
         userModel.findOne({'chatId': chatId}, function (err, user) {
             if(err)
                 throw err
-            if(msg.text == 'reset') {
+            /*if(msg.text == 'reset') {
                 console.log(user)
                 user['state'] = 0
                 user.name = ''
@@ -107,7 +109,7 @@ function createBot() {
                 user.typeOfConnection = ''
                 user.email = ''
                 user.save()
-            } else
+            } else*/
             if(user) {
                 if(user.state == 0) {
                     bot.sendMessage(chatId, strings['welcome'])
