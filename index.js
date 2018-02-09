@@ -4,6 +4,14 @@ var fs = require('fs');
 
 var strings = {
     'twice': "شما قبلا این نامه را امضا کرده‌اید :)",
+    'name': "لطفا نام و نام خانوادگی خود را وارد کنید.",
+    'connection': "لطفا نوع ارتباط خود با مسئله‌ی پیش آمده را انتخاب کنید.",
+    'email': "لطفا ایمیل خود را وارد کنید.",
+    'school': "لطفا نام مرکز سمپاد مرتبط با خود را وارد کنید.",
+    'university': "لطفا رشته‌ی تحصیلی، دانشگاه و مقطع تحصیلی خود را وارد کنید.",
+    'description': "**معرفی اجمالی خود**" + "\n"
+    "در این بخش به اختصار به مواردی از این قبیل اشاره بفرمایید: افتخارات علمی، فرهنگی، قرآنی و... خود نظیر مدال المپیاد، رتبه کنکور، موفقیت پژوهشی و... همچنین سوابق کاری ویژه یا فعالیت خاص در زمینه تعلیم و تربیت",
+    'welcome': "به بات تلگرام احیای سمپاد خوش آمده‌اید. لطفا مشخصات زیر را وارد کنید.",
 }
 
 
@@ -48,14 +56,14 @@ bot.on('message', (msg) => {
         if(err)
             throw err
         if(doc) {
-           bot.sendMessage(chat_id, strings['twice'])
+           bot.sendMessage(chatId, strings['twice'])
         } else {
-            startForm();
+            startForm(chatId);
         }
     })
 })
 
-function startFrom() {
+function startFrom(chatId) {
 
-
+    bot.sendMessage(chatId, strings['welcome'])
 }
