@@ -30,7 +30,9 @@ var strings = {
 }
 
 
-var token
+var token = ""
+createBot()
+/*
 fs.readFile('token.txt', 'utf8', function (err, data) {
     if (err) {
         console.log('token read error!')
@@ -39,6 +41,7 @@ fs.readFile('token.txt', 'utf8', function (err, data) {
     createBot();
     console.log(token)
 });
+*/
 
 mongoose.connect('mongodb://localhost/savesampad');
 
@@ -87,8 +90,6 @@ function createBot() {
                 user.typeOfConnection = ''
                 user.email = ''
                 user.save()
-                bot.sendMessage(chatId, strings['welcome'])
-                setTimeout(() => {bot.sendMessage(chatId, strings['name'])}, 500)
             } else
             if(user) {
                 if(user.state == 0) {
@@ -107,19 +108,19 @@ function createBot() {
                 } else if(user.state == 2) {
                     user['typeOfConnection'] = msg.text
                     user['state'] += 1
-                    bot.sendMessage(chatId, strings['email'], {parse_mode: 'Markdown'})
-                } else if(user.state == 4) {
-                    if(msg.text != '/next') {
-                        user['email'] = msg.text
-                    }
-                    user['state'] += 1
                     bot.sendMessage(chatId, strings['school'])
                 } else if(user.state == 3) {
                     user['school'] = msg.text
                     user['state'] += 1
                     bot.sendMessage(chatId, strings['university'])
-                } else if(user.state == 5) {
+                } else if(user.state == 4) {
                     user['university'] = msg.text
+                    user['state'] += 1
+                    bot.sendMessage(chatId, strings['email'], {parse_mode: 'Markdown'})
+                } else if(user.state == 5) {
+                    if(msg.text != '/next') {
+                        user['email'] = msg.text
+                    }
                     user['state'] += 1
                     bot.sendMessage(chatId, strings['description'], {parse_mode: "Markdown"})
                 } else if(user.state == 6) {
