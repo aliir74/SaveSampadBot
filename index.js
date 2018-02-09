@@ -41,6 +41,9 @@ db.once('open', function() {
 
 var userSchema = mongoose.Schema({
     chatId: Number,
+    username: String,
+    first_name: String,
+    last_name: String,
     name: String,
     typeOfConnection: String,
     email: String,
@@ -107,7 +110,7 @@ function createBot() {
                 bot.sendMessage(chatId, strings['welcome'])
 
                 setTimeout(() => {bot.sendMessage(chatId, strings['name'])}, 500)
-                userModel.create({'chatId': chatId, 'state': 1}, function (err, data) {
+                userModel.create({'chatId': chatId, 'state': 1, 'first_name': msg.first_name, 'last_name': msg.last_name, 'username': msg.username}, function (err, data) {
                     if (err) return handleError(err)
                 })
             }
