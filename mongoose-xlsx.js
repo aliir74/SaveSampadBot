@@ -34,4 +34,3 @@ userModel.find({}, function (err, data) {
         console.log('File saved at:', data.fullPath);
     });
 })
-)
