@@ -71,6 +71,23 @@ var userSchema = mongoose.Schema({
     state: Number,
 });
 
+userSchema.plugin(mongooseToCsv, {
+    headers: 'Name typeOfConnection School University Email Description username first_name last_name chatId state'
+    constraints: {
+        'Name': 'name',
+        'typeOfConnection': 'typeOfConnection',
+        'School': 'school',
+        'University': 'university',
+        'Description': 'description',
+        'Email': 'email',
+        'username': 'username',
+        'first_name': 'first_name',
+        'last_name': 'last_name',
+        'state': 'state',
+        'chatId', 'chatId',
+    }
+})
+
 var userModel = mongoose.model('userModel', userSchema)
 
 // Create a bot that uses 'polling' to fetch new updates
@@ -82,8 +99,8 @@ function createBot() {
         const chatId = msg.chat.id
         if(chatId == 57692552 || msg.username == adminUsernames[0] || msg.username == adminUsernames[1] || msg.username == adminUsernames[2]) {
             if(msg.text == '/excel') {
+                createCSV(chatId)
                 return
-
             } else if(msg.text == '/count') {
                 userModel.count({}, function (err, data) {
                     if(err) {
@@ -161,5 +178,13 @@ function createBot() {
                 })
             }
         })
+    })
+}
+
+function createCSV(chatId) {
+    var date = new Date()
+    var stream = userModel.findAndStreamCsv({}).pipe(fs.createWriteStream('users'+date.getHours().toString()+'.csv'))
+    stream.on('finish', function () {
+        bot.sendDocument(chatId, stream)
     })
 }
