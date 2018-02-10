@@ -72,7 +72,7 @@ var userSchema = mongoose.Schema({
 });
 
 userSchema.plugin(mongooseToCsv, {
-    headers: 'Name typeOfConnection School University Email Description username first_name last_name chatId state'
+    headers: 'Name typeOfConnection School University Email Description username first_name last_name chatId state',
     constraints: {
         'Name': 'name',
         'typeOfConnection': 'typeOfConnection',
@@ -84,7 +84,7 @@ userSchema.plugin(mongooseToCsv, {
         'first_name': 'first_name',
         'last_name': 'last_name',
         'state': 'state',
-        'chatId', 'chatId',
+        'chatId': 'chatId',
     }
 })
 
@@ -182,9 +182,22 @@ function createBot() {
 }
 
 function createCSV(chatId) {
+    /*
     var date = new Date()
-    var stream = userModel.findAndStreamCsv({}).pipe(fs.createWriteStream('users'+date.getHours().toString()+'.csv'))
+    userModel.find({}, function (err, data) {
+        fs.createWriteStream('users'+date.getHours().toString()+'.csv')
+    })
     stream.on('finish', function () {
         bot.sendDocument(chatId, stream)
     })
+    */
+
+    userModel.find({}, function (err, data) {
+        var model = mongoXlsx.buildDynamicModel(data);
+        mongoXlsx.mongoData2Xlsx(data, model, function(err, data) {
+            bot.sendMessage(chatId, 'File saved at:', data.fullPath)
+            bot.sendDocument(chatId, data.fullPath);
+        });
+    })
+
 }
