@@ -47,6 +47,7 @@ function addUsernames() {
     }
     for(let i = 0; i < users.length; i++) {
       let chatId = users[i].chatId
+      console.log(chatId)
       bot.getChat(chatId, function(msg) {
         console.log(msg)
         users[i].username = msg.chat.username
