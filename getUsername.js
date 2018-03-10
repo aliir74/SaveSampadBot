@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 var mongoose = require('mongoose');
 var fs = require('fs');
 
-var token = "527551241:AAFu1UusFdUSp8k07dGceIk4LKgme6B3gJI"
+var token = ""
 /*fs.readFile('token.txt', 'utf8', function (err, data) {
     if (err) {
         console.log('token read error!')
