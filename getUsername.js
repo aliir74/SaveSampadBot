@@ -41,17 +41,19 @@ addUsernames()
 
 function addUsernames() {
   const bot = new TelegramBot(token, {polling: true});
-  userModel.find({}, function (err, users) {
+  userModel.find({}, async function(err, users) {
     if(!users) {
       return
     }
     for(let i = 0; i < users.length; i++) {
       let chatId = users[i].chatId
       console.log(i, users.length)
-      bot.getChat(chatId, function(msg) {
-        console.log(i, "done")
-        users[i].username = msg.chat.username
-        users[i].save()
+      await bot.getChat(chatId).then(function(msg) {
+        console.log(i, "done", msg.username)
+        users[i].username = msg.username
+        users[i].save(function(err, data){
+          console.log(i, "saved")
+        })
       })
     }
   })
